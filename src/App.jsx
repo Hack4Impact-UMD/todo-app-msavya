@@ -44,6 +44,19 @@ function App() {
   */
   const addTask = () => {
     // START EDITING
+    if(title!="" || title == true){
+      const newTask = {
+        id: uuidv4(),
+        title: title,
+        description: description,
+        completed: false, // Task should start as NOT COMPLETED
+        dueDate: dueDate
+      } 
+      setTasks([...tasks, newTask]);
+      setTitle("")
+      setDescription("")
+      setDueDate("")
+    }
     // END EDITING
   };
 
@@ -61,6 +74,7 @@ function App() {
   */
   const toggleCompletion = (id) => {
     // START EDITING
+    setTasks((prevTasks) => prevTasks.map((task) => (task.id == id)? {...task, completed: !task.completed}: task))
     // END EDITING
   };
   
@@ -97,6 +111,11 @@ function App() {
   */
   const calculateProgress = () => {
     // START EDITING
+    if(tasks.length == 0){
+      return 0
+    }
+    const completedTaskCount = tasks.filter((task) => task.completed).length;
+    return completedTaskCount / tasks.length * 100;
     // END EDITING
   };
 
@@ -116,16 +135,22 @@ function App() {
         <TextField
           required
           label="Title"
+          value = {title}
+          onChange = {(e) => setTitle(e.target.value)}
         />
         <TextField
           label="Description"
+          value = {description}
+          onChange = {(e) => setDescription(e.target.value)}
         />
         <TextField
           label="Due Date"
           type="date"
           InputLabelProps={{ shrink: true }}
+          value = {dueDate}
+          onChange = {(e) => setDueDate(e.target.value)}
         />
-        <Button variant="contained">
+        <Button variant="contained" onClick = {() => addTask()}>
           Add Task
         </Button>
       </div>
@@ -140,6 +165,7 @@ function App() {
       />
       <LinearProgress
         variant="determinate"
+        value = {calculateProgress()}
         sx={{ width: "100%", height: 10, borderRadius: 5, marginBottom: 2 }}
       />
       <TaskTable 
